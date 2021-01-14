@@ -29,6 +29,9 @@ geos = rg.search([(row[0], row[1]) for row in rows ])
 # third pass: save geocoding
 for r, row in enumerate(rows):
   g = geos[r]
+  if g['admin1'] == 'Washington, D.C.':
+    g['admin1'] = "DC"
+    g['name'] = "Washington"
   c.execute("UPDATE videos SET country=?, state=?, city=? WHERE id=?", ( g['cc'], g['admin1'], g['name'], row[2] ))
   conn.commit()
   print(g['cc'], g['admin1'], g['name'], row[2])
