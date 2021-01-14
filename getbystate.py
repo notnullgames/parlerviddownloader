@@ -7,7 +7,7 @@ import csv
 try:
   state = sys.argv[1]
 except IndexError:
-  print('Usage %s "<STATE>"' % sys.argv[0])
+  print(f'Usage {sys.argv[0]} "<STATE>"')
   exit(1)
 
 state = state.lower().strip()

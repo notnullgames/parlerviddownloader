@@ -7,7 +7,7 @@ import csv
 try:
   zip = sys.argv[1]
 except IndexError:
-  print("Usage %s <ZIP>" % sys.argv[0])
+  print(f"Usage {sys.argv[0]} <ZIP>")
   exit(1)
 
 csvfilename = os.path.join(os.path.dirname(__file__), 'videos.csv')

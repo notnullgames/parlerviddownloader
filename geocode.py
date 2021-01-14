@@ -19,7 +19,7 @@ with open(csvfilename, newline='') as csvfile:
   for i, row in enumerate(csv.reader(csvfile)):
       if (i  != 0):
         try:
-          location = geolocator.reverse("%s,%s" % (row[1], row[0])).raw['address']
+          location = geolocator.reverse(f'{row[1]},{row[0]}').raw['address']
           row.append(location.get('postcode', ''))
           row.append(location.get('country_code', ''))
           row.append(location.get('state', ''))

@@ -7,7 +7,7 @@ import csv
 try:
   loc = sys.argv[1]
 except IndexError:
-  print('Usage %s "<CITY, STATE>"' % sys.argv[0])
+  print(f'Usage {sys.argv[0]} "<CITY, STATE>"')
   exit(1)
 
 [city, state] = [l.lower().strip() for l in loc.split(',') ]
