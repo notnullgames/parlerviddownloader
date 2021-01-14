@@ -12,7 +12,7 @@ python3 geocode.py CSV_FILE
 
 ## Dependencies
 
-- Download and extract the [videos.db]() file to the same directory.
+- Download and extract the [videos.db](https://github.com/notnullgames/parlerviddownloader/releases/download/0.0.0/videos.zip) file to the same directory.
 - Install "requests": `pip3 install requests`
 
 
