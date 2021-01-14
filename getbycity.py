@@ -2,7 +2,7 @@
 
 import os
 import sys
-import csv
+import sqlite3
 
 try:
   loc = sys.argv[1]
@@ -12,9 +12,8 @@ except IndexError:
 
 [city, state] = [l.lower().strip() for l in loc.split(',') ]
 
-csvfilename = os.path.join(os.path.dirname(__file__), 'videos.csv')
+conn = sqlite3.connect('videos.db')
+c = conn.cursor()
 
-with open(csvfilename, 'r', newline='') as csvfile:
-  for i, row in enumerate(csv.reader(csvfile)):
-      if (i  != 0 and row[6].lower() == state and row[7].lower() == city):
-        print(row[3])
+for row in c.execute("SELECT id FROM videos WHERE LOWER(city)=? AND LOWER(state)=? ORDER BY id", [city, state]):
+  print(row[0])

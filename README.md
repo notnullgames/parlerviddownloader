@@ -3,27 +3,20 @@
 Tools for mirroring parler videos.
 
 
-You don't really need to do this, because I used this to create `videos.csv`. This will allow you to geocode data (get city/state/country/zip) from a csv file [like this](https://gofile.io/d/7Wg83o).
+You don't really need to do this, because I used this to create `videos.db`. This will allow you to geocode data (get city/state/country/zip) from a csv file [like this](https://gofile.io/d/7Wg83o).
 
 
 ```
-python3 geocode.py CSV_FILE > BETTER_CSV_FILE
+python3 geocode.py CSV_FILE
 ```
 
 ## Dependencies
 
-- Download and extract the [videos.csv]() file to the same directory.
+- Download and extract the [videos.db]() file to the same directory.
 - Install "requests": `pip3 install requests`
 
 
 ## Usage
-
-This will split out all the IDs for a zipcode:
-
-
-```
-python3 getbyzip.py 97239
-```
 
 
 This will split out all the IDs for a named city:

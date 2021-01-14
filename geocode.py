@@ -2,7 +2,8 @@
 
 import sys
 import csv
-from geopy.geocoders import Nominatim
+import reverse_geocoder as rg
+import sqlite3
 
 try:
   csvfilename = sys.argv[1]
@@ -10,20 +11,24 @@ except IndexError:
   print("Usage %s <CSV_FILE>" % sys.argv[0])
   exit(1)
 
+conn = sqlite3.connect('videos.db')
+c = conn.cursor()
+c.execute("CREATE TABLE IF NOT EXISTS videos (longitude float, latitude float, time datetime, id text PRIMARY KEY, country text, state text, city text)")
 
-geolocator = Nominatim(user_agent="parlerviddownloader")
-
-print("longitude,latitude,timestamp,id,zip,country,state,city")
-
+# first pass: build database
 with open(csvfilename, newline='') as csvfile:
   for i, row in enumerate(csv.reader(csvfile)):
-      if (i  != 0):
-        try:
-          location = geolocator.reverse(f'{row[1]},{row[0]}').raw['address']
-          row.append(location.get('postcode', ''))
-          row.append(location.get('country_code', ''))
-          row.append(location.get('state', ''))
-          row.append(location.get('city', ''))
-          print(','.join(row))
-        except:
-          pass
+    if (i!=0):
+      c.execute("REPLACE INTO videos (longitude, latitude, time, id) VALUES (?,?,?,?)", row)
+      conn.commit()
+
+# second pass: local geocode
+rows = [row for row in c.execute("SELECT latitude,longitude,id FROM videos ORDER BY id")]
+geos = rg.search([(row[0], row[1]) for row in rows ])
+
+# third pass: save geocoding
+for r, row in enumerate(rows):
+  g = geos[r]
+  c.execute("UPDATE videos SET country=?, state=?, city=? WHERE id=?", ( g['cc'], g['admin1'], g['name'], row[2] ))
+  conn.commit()
+  print(g['cc'], g['admin1'], g['name'], row[2])
