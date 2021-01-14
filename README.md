@@ -34,10 +34,10 @@ This will split out all the IDs for a state:
 python3 getbystate.py Oregon
 ```
 
-and `downlaodvideos.py` will download a list of incoming IDs (from stdin) into "downloads/" so to put it all together, to get portland:
+and `downloadvideos.py` will download a list of incoming IDs (from stdin) into "downloads/" so to put it all together, to get portland:
 
 ```
-python3 getbycity.py "Portland, Oregon" | python3 downlaodvideos.py
+python3 getbycity.py "Portland, Oregon" | python3 downloadvideos.py
 ```
 
 It checks the filesystem to see if you already downloaded it, and just downlaods into the current directory.
