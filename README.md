@@ -26,10 +26,10 @@ This will split out all the IDs for a named city:
 python3 getbycity.py "Portland, Oregon"
 ```
 
-I don't have any abbreviations for states, so you may have to look in videos.csv to figure out the format, for exmaple this is Washington DC:
+I don't have any abbreviations for states, so you may have to look in the database to figure out the name format, for exmaple this is Washington DC:
 
 ```
-python3 getbycity.py "Washington, District of Columbia"
+python3 getbycity.py "Washington, DC"
 ```
 
 
