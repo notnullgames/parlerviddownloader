@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+This will geocode the lat/lng positions, and turn a CSV into sqlite database
+"""
+
 import sys
 import csv
 import reverse_geocoder as rg
@@ -13,7 +17,7 @@ except IndexError:
 
 conn = sqlite3.connect('videos.db')
 c = conn.cursor()
-c.execute("CREATE TABLE IF NOT EXISTS videos (longitude float, latitude float, time datetime, id text PRIMARY KEY, country text, state text, city text)")
+c.execute("CREATE TABLE IF NOT EXISTS videos (longitude FLOAT, latitude FLOAT, time TEXT, id TEXT PRIMARY KEY, country TEXT, state TEXT, city TEXT, username TEXT, displayname TEXT)")
 
 # first pass: build database
 with open(csvfilename, newline='') as csvfile:

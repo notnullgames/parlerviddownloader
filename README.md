@@ -3,7 +3,7 @@
 Tools for mirroring parler videos.
 
 
-You don't really need to do this, because I used this to create `videos.db`. This will allow you to geocode data (get city/state/country/zip) from a csv file [like this](https://gofile.io/d/7Wg83o).
+You don't really need to do this, because I used this to create [videos.db](https://github.com/notnullgames/parlerviddownloader/releases/download/0.0.0/videos.zip). This will allow you to geocode data (get city/state/country/zip) from a csv file [like this](https://gofile.io/d/7Wg83o). It also has [user-data](https://gofile.io/d/t6M4zx) 
 
 
 ```

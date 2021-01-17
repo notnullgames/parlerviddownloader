@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Given a stream of IDs on stdin, use the IP-trick to download videos (without modification to hosts file)
+"""
+
 import os
 import sys
 import requests

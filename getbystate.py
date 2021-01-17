@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Search by state, spits out IDs for download.py
+"""
+
 import os
 import sys
 import sqlite3

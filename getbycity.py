@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+"""
+Search by city, spits out IDs for download.py
+"""
+
+
 import os
 import sys
 import sqlite3
