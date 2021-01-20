@@ -3,19 +3,19 @@
 """
 Build sqlite db from meta-data tarball and user-data CSV
 
-You should have metadata.tar.gz and user_to_video.csv
+You should have metadata.tar.gz and user_to_video.csv extracted here
 """
 
 import os
 import sys
 import csv
 import sqlite3
-import tarfile
 import json
 import re
 import datetime
 import dateutil.parser
 import reverse_geocoder as rg
+from os import listdir
 
 __dir = os.path.dirname(os.path.realpath(__file__))
 conn = sqlite3.connect(os.path.join(__dir, 'videos.db'))
@@ -73,22 +73,22 @@ def insert(record, table='videos'):
 # build a video-to-user-mapping
 usermap = {}
 namemap = {}
-with open('user_to_video.csv', newline='') as csvfile:
-  for i, row in enumerate(csv.reader(csvfile)):
-    if (i!=0):
-      for vid in [r.split('/')[-1].replace('.mp4', '').replace('_small', '') for r in row[2:]]:
-        namemap[vid] = row[0]
-        usermap[vid] = row[1]
+def step_user():
+  with open('user_to_video.csv', newline='') as csvfile:
+    for i, row in enumerate(csv.reader(csvfile)):
+      if (i!=0):
+        for vid in [r.split('/')[-1].replace('.mp4', '').replace('_small', '') for r in row[2:]]:
+          namemap[vid] = row[0]
+          usermap[vid] = row[1]
 
 # first pass: create the database with meta-data 
-with tarfile.open('metadata.tar.gz') as metaFile:
-  for f in metaFile.getnames():
-    id = f.replace('metadata/meta-', '').replace('.json', '')
-    if id == 'metadata' or id == 'metadata/.aws':
+def step_meta():
+  for f in listdir(os.path.join(__dir, 'metadata')):
+    id = f.replace('meta-', '').replace('.json', '')
+    if id[0] == '.':
       continue
     print(id)
-    d = metaFile.extractfile(f)
-    if d:
+    with open(os.path.join(__dir, 'metadata', f)) as d:
       for meta in json.loads(d.read()):
         record = {
           'id': id,
@@ -98,9 +98,9 @@ with tarfile.open('metadata.tar.gz') as metaFile:
           'width': meta.get('SourceImageWidth', None),
           'height': meta.get('SourceImageHeight', None)
         }
-        d = meta.get('CreateDate', '0000:00:00 00:00:00')
-        if d != '0000:00:00 00:00:00':
-          record['time'] = dateutil.parser.parse(d).isoformat()
+        t = meta.get('CreateDate', '0000:00:00 00:00:00')
+        if t != '0000:00:00 00:00:00':
+          record['time'] = dateutil.parser.parse(t).isoformat()
         gps = meta.get('GPSCoordinates', False)
         if gps:
           loc = getLocation(gps)
@@ -108,19 +108,24 @@ with tarfile.open('metadata.tar.gz') as metaFile:
           record['longitude'] = loc[1]
           record['altitude'] = loc[2]
         insert(record)
+      conn.commit()
+
+# get geo info for every record
+def step_geocode():
+  rows = [row for row in c.execute("SELECT latitude,longitude,id FROM videos ORDER BY id")]
+  geos = rg.search([(row[0], row[1]) for row in rows ])
+  values = []
+  for r, row in enumerate(rows):
+    g = geos[r]
+    if g['admin1'] == 'Washington, D.C.':
+      g['admin1'] = "DC"
+      g['name'] = "Washington"
+    values.append(( g['cc'], g['admin1'], g['name'], row[2] ))
+  c.executemany("UPDATE videos SET country=?, state=?, city=? WHERE id=?", values)
   conn.commit()
 
-# second pass: geocode all of the locations
-rows = [row for row in c.execute("SELECT latitude,longitude,id FROM videos ORDER BY id")]
-geos = rg.search([(row[0], row[1]) for row in rows ])
+step_user()
+step_meta()
+step_geocode()
 
-# third pass: save geocoding
-values = []
-for r, row in enumerate(rows):
-  g = geos[r]
-  if g['admin1'] == 'Washington, D.C.':
-    g['admin1'] = "DC"
-    g['name'] = "Washington"
-  values.append(( g['cc'], g['admin1'], g['name'], row[2] ))
-c.executemany("UPDATE videos SET country=?, state=?, city=? WHERE id=?", values)
-conn.commit()
+
