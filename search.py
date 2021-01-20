@@ -21,6 +21,7 @@ parser.add_argument('-c', '--city', help='city to search for')
 parser.add_argument('-s', '--state', help='state to search for')
 parser.add_argument('-u', '--user', help='username to search for')
 parser.add_argument('-w', '--with-user', help='Only show records that have user-data', action='store_const', const=True, default=False)
+parser.add_argument('-g', '--with-geo', help='Only show records that have location-data', action='store_const', const=True, default=False)
 parser.add_argument('-b', '--begin', help='start-time to search for')
 parser.add_argument('-e', '--end', dest='end', help='end-time to search for')
 parser.add_argument('-f', '--fields', help='The fields you want to include', default='id,latitude,longitude,time,country,state,city,username,displayName')
@@ -36,7 +37,10 @@ params = []
 terms = []
 
 if (args.with_user):
-  params.append('username != NULL')
+  params.append('username != "None"')
+
+if (args.with_geo):
+  params.append('latitude != 0')
 
 if (args.city):
   params.append("city LIKE ?")

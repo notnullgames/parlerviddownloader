@@ -67,7 +67,7 @@ def insert(record, table='videos'):
       keys.append(k)
       values.append(v)
       qs.append('?')
-  return c.executemany(f"INSERT INTO {table} ({','.join(keys)}) VALUES ({','.join(qs)})", [values])
+  return c.executemany(f"REPLACE INTO {table} ({','.join(keys)}) VALUES ({','.join(qs)})", [values])
   
 
 # build a video-to-user-mapping
@@ -87,7 +87,6 @@ def step_meta():
     id = f.replace('meta-', '').replace('.json', '')
     if id[0] == '.':
       continue
-    print(id)
     with open(os.path.join(__dir, 'metadata', f)) as d:
       for meta in json.loads(d.read()):
         record = {
@@ -115,7 +114,7 @@ def step_meta():
 
 # get geo info for every record
 def step_geocode():
-  rows = [row for row in c.execute("SELECT latitude,longitude,id FROM videos ORDER BY id")]
+  rows = [row for row in c.execute("SELECT latitude,longitude,id FROM videos WHERE latitude != 0 AND longitude != 0")]
   geos = rg.search([(row[0], row[1]) for row in rows ])
   values = []
   for r, row in enumerate(rows):
@@ -127,8 +126,10 @@ def step_geocode():
   c.executemany("UPDATE videos SET country=?, state=?, city=? WHERE id=?", values)
   conn.commit()
 
-step_user()
-step_meta()
-step_geocode()
+if __name__ == '__main__':
+  step_user()
+  step_meta()
+  step_geocode()
+  fix_geo()
 
 
