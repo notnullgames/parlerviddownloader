@@ -100,7 +100,10 @@ def step_meta():
         }
         t = meta.get('CreateDate', '0000:00:00 00:00:00')
         if t != '0000:00:00 00:00:00':
-          record['time'] = dateutil.parser.parse(t).isoformat()
+          try:
+            record['time'] = dateutil.parser.parse(t).isoformat()
+          except:
+            pass
         gps = meta.get('GPSCoordinates', False)
         if gps:
           loc = getLocation(gps)
@@ -108,7 +111,7 @@ def step_meta():
           record['longitude'] = loc[1]
           record['altitude'] = loc[2]
         insert(record)
-      conn.commit()
+        conn.commit()
 
 # get geo info for every record
 def step_geocode():
