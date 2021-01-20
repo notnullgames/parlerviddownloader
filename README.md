@@ -16,3 +16,34 @@ You don't really need to use this, because I used this to create [videos.db](htt
 ### search.py
 
 Search database, based on a few fields
+
+Download [videos.db](https://github.com/notnullgames/parlerviddownloader/releases/download/0.0.0/videos.zip) and put it in the same dir as search.py.
+
+
+```
+usage: search.py [-h] [-c CITY] [-s STATE] [-u USER] [-w] [-b BEGIN] [-e END] [-f FIELDS] [-o]
+
+Search Parler video meta-data
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c CITY, --city CITY  city to search for
+  -s STATE, --state STATE
+                        state to search for
+  -u USER, --user USER  username to search for
+  -w, --with-user       Only show records that have user-data
+  -b BEGIN, --begin BEGIN
+                        start-time to search for
+  -e END, --end END     end-time to search for
+  -f FIELDS, --fields FIELDS
+                        The fields you want to include
+  -o, --or              Use OR instead of AND to combine search-items
+```
+
+#### Examples:
+
+Use fullname for `state` (no abbreviation) except for `DC`.
+
+- `search.py -c washington -s DC -b "jan 6", -e "jan 7"` - get videos recorded during capital riot
+- `search.py -c portland -s oregon` - get videos from Portland, OR.
+- `search.py -f id` - output only the ID of all videos
