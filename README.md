@@ -64,11 +64,6 @@ Turn [video meta-data](magnet:?xt=urn:btih:1723e27bc79186c4574ff056ddb458d771c26
 Correlate [user-data](https://gofile.io/d/t6M4zx) to videos
 
 
-### geocode.py
-
-Add geocoding info (from local geocoder) to make searching easier
-
-
 
 
 ### search.py
