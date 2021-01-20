@@ -36,6 +36,8 @@ c.execute('''
     height INT
   )
 ''')
+c.execute('''PRAGMA synchronous = EXTRA''')
+c.execute('''PRAGMA journal_mode = WAL''')
 
 # convert geo location from dms to dd
 def dms_to_dd(d, m, s):
@@ -63,7 +65,7 @@ def insert(record, table='videos'):
       keys.append(k)
       values.append(v)
       qs.append('?')
-  return c.execute(f"INSERT INTO {table} ({','.join(keys)}) VALUES ({','.join(qs)})", values)
+  return c.executemany(f"INSERT INTO {table} ({','.join(keys)}) VALUES ({','.join(qs)})", [values])
   
 
 # build a video-to-user-mapping
@@ -104,17 +106,19 @@ with tarfile.open('metadata.tar.gz') as metaFile:
           record['longitude'] = loc[1]
           record['altitude'] = loc[2]
         insert(record)
+  conn.commit()
 
 # second pass: geocode all of the locations
 rows = [row for row in c.execute("SELECT latitude,longitude,id FROM videos ORDER BY id")]
 geos = rg.search([(row[0], row[1]) for row in rows ])
 
 # third pass: save geocoding
+values = []
 for r, row in enumerate(rows):
   g = geos[r]
   if g['admin1'] == 'Washington, D.C.':
     g['admin1'] = "DC"
     g['name'] = "Washington"
-  c.execute("UPDATE videos SET country=?, state=?, city=? WHERE id=?", ( g['cc'], g['admin1'], g['name'], row[2] ))
-  conn.commit()
-  print(g['cc'], g['admin1'], g['name'], row[2])
+  values.append(( g['cc'], g['admin1'], g['name'], row[2] ))
+c.executemany("UPDATE videos SET country=?, state=?, city=? WHERE id=?", values)
+conn.commit()
