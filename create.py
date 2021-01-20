@@ -6,6 +6,7 @@ Build sqlite db from meta-data tarball and user-data CSV
 You should have metadata.tar.gz and user_to_video.csv
 """
 
+import os
 import sys
 import csv
 import sqlite3
@@ -16,7 +17,8 @@ import datetime
 import dateutil.parser
 import reverse_geocoder as rg
 
-conn = sqlite3.connect('videos.db')
+__dir = os.path.dirname(os.path.realpath(__file__))
+conn = sqlite3.connect(os.path.join(__dir, 'videos.db'))
 c = conn.cursor()
 
 c.execute('''
@@ -36,8 +38,8 @@ c.execute('''
     height INT
   )
 ''')
-c.execute('''PRAGMA synchronous = EXTRA''')
-c.execute('''PRAGMA journal_mode = WAL''')
+c.execute('PRAGMA synchronous = EXTRA')
+c.execute('PRAGMA journal_mode = WAL')
 
 # convert geo location from dms to dd
 def dms_to_dd(d, m, s):
