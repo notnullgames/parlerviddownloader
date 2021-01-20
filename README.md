@@ -47,3 +47,30 @@ python3 getbycity.py "Portland, Oregon" | python3 downloadvideos.py
 ```
 
 If you see "Video is gone" it means that it is no longer on S3 (but may have been archived by someone else.)
+
+
+## new
+
+I am working on some new ideas, which eventually will replace this repo, in new/
+
+
+### meta2db.py
+
+Turn [video meta-data](magnet:?xt=urn:btih:1723e27bc79186c4574ff056ddb458d771c26e2f&dn=metadata.tar.gz&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2) (1032523 total videos) into initial sqlite db.
+
+
+### adduser.py
+
+Correlate [user-data](https://gofile.io/d/t6M4zx) to videos
+
+
+### geocode.py
+
+Add geocoding info (from local geocoder) to make searching easier
+
+
+
+
+### search.py
+
+Search database, based on a few fields

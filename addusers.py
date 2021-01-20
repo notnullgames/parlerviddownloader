@@ -21,6 +21,10 @@ c.execute("CREATE TABLE IF NOT EXISTS videos (longitude FLOAT, latitude FLOAT, t
 with open(csvfilename, newline='') as csvfile:
   for i, row in enumerate(csv.reader(csvfile)):
     if (i!=0):
-      ids = [r.split('/')[-1].replace('.mp4', '').replace('_small', '') for r in row[2:]]
-      c.execute(f"UPDATE videos SET displayname=?, username=? WHERE id IN ({','.join('?'*len(ids))})", [row[0], row[1], *ids])
-      conn.commit()
+      for vid in [r.split('/')[-1].replace('.mp4', '').replace('_small', '') for r in row[2:]]:
+        for data in c.execute("SELECT id, COUNT(id) from videos WHERE id=?", [vid]):
+          print(data[0], data[1])
+
+      # print(ids)
+      # c.execute(f"UPDATE videos SET displayname=?, username=? WHERE id IN ({','.join('?'*len(ids))})", [row[0], row[1], *ids])
+      # conn.commit()
