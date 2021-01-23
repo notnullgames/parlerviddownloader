@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# collect meta info from images
+# sadly no EXIF, but still great other info
+
 # this is where the S3 bucket is mounted
 IMAGES_LOCATION="./images"
 

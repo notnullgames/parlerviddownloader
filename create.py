@@ -35,11 +35,18 @@ c.execute('''
     displayname TEXT,
     mime TEXT,
     width INT,
-    height INT
+    height INT,
+    duration INT
   )
 ''')
 c.execute('PRAGMA synchronous = EXTRA')
 c.execute('PRAGMA journal_mode = WAL')
+
+# normalize 00:00:00 and 10.2s to seconds float
+def time_to_sec(time_str):
+  if time_str.find(':') != -1:
+    return sum(x * float(t) for x, t in zip([1, 60, 3600], reversed(time_str.split(":"))))
+  return 0
 
 # convert geo location from dms to dd
 def dms_to_dd(d, m, s):
@@ -95,7 +102,8 @@ def step_meta():
           'displayname': namemap.get(id, None),
           'mime': meta['MIMEType'],
           'width': meta.get('SourceImageWidth', None),
-          'height': meta.get('SourceImageHeight', None)
+          'height': meta.get('SourceImageHeight', None),
+          'duration': time_to_sec(meta.get('Duration', ''))
         }
         t = meta.get('CreateDate', '0000:00:00 00:00:00')
         if t != '0000:00:00 00:00:00':
@@ -130,6 +138,3 @@ if __name__ == '__main__':
   step_user()
   step_meta()
   step_geocode()
-  fix_geo()
-
-

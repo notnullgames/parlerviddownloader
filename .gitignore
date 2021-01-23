@@ -8,3 +8,4 @@ images.db*
 metadata
 ddosecrets-parler-images-listing.txt
 /images
+.DS_Store
