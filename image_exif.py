@@ -4,7 +4,7 @@
 # put ddosecrets-parler-images-listing.txt in same dir from https://parler.ddosecrets.com/static/ddosecrets-parler-images-listing.txt.gz
 
 # this is where your images are located
-IMAGE_DIR='/tmp/parler-images'
+IMAGE_DIR='images'
 
 import os
 import sqlite3
@@ -56,8 +56,10 @@ for line in open(os.path.join(__dir, 'ddosecrets-parler-images-listing.txt')):
   with open(os.path.join(IMAGE_DIR, fname), 'rb') as image_file:
     image = Image(image_file)
     id = fname.split('.')[0]
+    print(id)
     record = {
-      'id': id
+      'id': id,
+      'mime': mimetypes.guess_type(fname)[0]
     }
     if (image.has_exif):
       lat = image.get('gps_latitude', None)
@@ -69,20 +71,25 @@ for line in open(os.path.join(__dir, 'ddosecrets-parler-images-listing.txt')):
       time = image.get('datetime', None)
       if time:
         record['time'] = dateutil.parser.parse(time).isoformat()
-      record['mime'] = mimetypes.guess_type(fname)[0]
-    record['width'] = image['pixel_x_dimension']
-    record['height'] = image['pixel_y_dimension']
+      record['width'] = image['pixel_x_dimension']
+      record['height'] = image['pixel_y_dimension']
+    print(record)
     insert(record)
     conn.commit()
 
-  rows = [row for row in c.execute("SELECT latitude,longitude,id FROM images WHERE latitude!=0 ORDER BY id")]
-  geos = rg.search([(row[0], row[1]) for row in rows ])
-  values = []
-  for r, row in enumerate(rows):
-    g = geos[r]
-    if g['admin1'] == 'Washington, D.C.':
-      g['admin1'] = "DC"
-      g['name'] = "Washington"
-    values.append(( g['cc'], g['admin1'], g['name'], row[2] ))
-  c.executemany("UPDATE images SET country=?, state=?, city=? WHERE id=?", values)
-  conn.commit()
+print("adding geocoding info")
+rows = [row for row in c.execute("SELECT latitude,longitude,id FROM images WHERE latitude!=0 ORDER BY id")]
+for row in rows:
+  try:
+    geos = rg.search([(row[0], row[1]) for row in rows ])
+    values = []
+    for r, row in enumerate(rows):
+      g = geos[r]
+      if g['admin1'] == 'Washington, D.C.':
+        g['admin1'] = "DC"
+        g['name'] = "Washington"
+      values.append(( g['cc'], g['admin1'], g['name'], row[2] ))
+    c.executemany("UPDATE images SET country=?, state=?, city=? WHERE id=?", values)
+    conn.commit()
+  except IndexError:
+    pass

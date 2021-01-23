@@ -7,3 +7,4 @@ videos.db*
 images.db*
 metadata
 ddosecrets-parler-images-listing.txt
+/images
