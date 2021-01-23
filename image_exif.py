@@ -4,7 +4,7 @@
 # put ddosecrets-parler-images-listing.txt in same dir from https://parler.ddosecrets.com/static/ddosecrets-parler-images-listing.txt.gz
 
 # this is where your images are located
-IMAGE_DIR='/home/konsumer/Downloads/exif-samples-master'
+IMAGE_DIR='/tmp/parler-images'
 
 import os
 import sqlite3
@@ -51,22 +51,7 @@ def insert(record, table='images'):
   return c.executemany(f"INSERT INTO {table} ({','.join(keys)}) VALUES ({','.join(qs)})", [values])
 
 
-testimages = [
-  "jpg/gps/DSCN0021.jpg",
-  "jpg/gps/DSCN0010.jpg",
-  "jpg/gps/DSCN0029.jpg",
-  "jpg/gps/DSCN0027.jpg",
-  "jpg/gps/DSCN0038.jpg",
-  "jpg/gps/DSCN0012.jpg",
-  "jpg/gps/DSCN0042.jpg",
-  "jpg/gps/DSCN0025.jpg",
-  "jpg/gps/DSCN0040.jpg",
-  "jpg/tests/45-gps_ifd.jpg"
-]
-
-
-# for line in open(os.path.join(__dir, 'ddosecrets-parler-images-listing.txt')):
-for line in testimages:
+for line in open(os.path.join(__dir, 'ddosecrets-parler-images-listing.txt')):
   fname = line.strip().split(' ')[-1]
   with open(os.path.join(IMAGE_DIR, fname), 'rb') as image_file:
     image = Image(image_file)
